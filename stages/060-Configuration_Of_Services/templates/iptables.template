@@ -1,0 +1,122 @@
+##############################
+# IPTable Rules
+# By: Bubba
+# Date created: Wed Jun 13 21:03:12 EDT 2018
+# Date last modified: Wed Jun 13 21:03:35 EDT 2018
+##############################
+
+##############################
+# START FILTER TABLE
+##############################
+
+*filter
+:INPUT DROP [0:0]
+:FORWARD DROP [0:0]
+:OUTPUT DROP [0:0]
+
+# ALLOW LOCAL TRAFFIC
+-A INPUT -i lo -j ACCEPT
+-A OUTPUT -o lo -j ACCEPT
+
+##############################
+# START GENERAL SECURITY RULES
+##############################
+
+# DROP Connections that are syn packets but not in a NEW STATE
+-A INPUT -p tcp ! --syn -m state --state NEW -j DROP
+
+# DROP connections that are fragmented.
+-A INPUT -f -j DROP
+-A OUTPUT -f -j DROP
+
+# DROP invalid connections. 
+-A INPUT -m state --state INVALID -j DROP
+-A OUTPUT -m state --state INVALID -j DROP
+
+## These are a bunch of tcp flags that we should check.
+## Syntax: <flags,we,should,examine> <flags,we,check>
+## DROP acknowledgemnet packets when they also close the connection.
+-A INPUT -p tcp --tcp-flags ACK,FIN FIN -j DROP
+-A INPUT -p tcp --tcp-flags ALL URG,PSH,SYN,FIN -j DROP
+-A INPUT -p tcp --tcp-flags SYN,RST SYN,RST -j DROP
+# DROP acknowledgement packets when they are also requesting to push the buffer.
+-A INPUT -p tcp --tcp-flags ACK,PSH PSH -j DROP
+# DROP acknowledgement packtes when they are urgent. Nobody uses urgent.
+-A INPUT -p tcp --tcp-flags ACK,URG URG -j DROP
+# DROP XMAX packets. No combination of packets should ever look like this.
+-A INPUT -p tcp --tcp-flags ALL ALL -j DROP
+# DROP NULL packets. No packets should ever have no flags set.
+-A INPUT -p tcp --tcp-flags ALL NONE -j DROP
+# DROP packets that have these flags set on sync.
+-A INPUT -p tcp --tcp-flags ALL SYN,RST,ACK,FIN,URG -j DROP
+# DROP SYN-FIN packet scans.
+-A INPUT -p tcp --tcp-flags SYN,FIN SYN,FIN -j DROP
+-A INPUT -p tcp --tcp-flags ALL SYN,FIN -j DROP
+# DROP FIN-RST packet scans.
+-A INPUT -p tcp --tcp-flags FIN,RST FIN,RST -j DROP
+# DROP nmap style xmas scans.
+-A INPUT -p tcp --tcp-flags ALL URG,PSH,FIN -j DROP
+# DROP FIN scans. This rule might cause problems.
+-A INPUT -p tcp --tcp-flags ALL FIN -j DROP
+
+# ALLOW outgoing packets and any connections already established.
+-A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+-A OUTPUT -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+
+# Protecting portscans
+ Attacking IP will be locked for 24 hours (3600 x 24 = 86400 Seconds)
+ -p tcp --dport 22 -m recent --name badguy --set -j DROP
+ -A INPUT -m recent --name badguy --rcheck --seconds 2 -j DROP  
+ -A INPUT -m recent --name badguy --set -j ACCEPT             
+ -A INPUT -m recent --name badguy --remove 
+
+# Remove attacking IP after 24 hours
+-A INPUT -m recent --name portscan --remove
+
+-A INPUT -m hashlimit --hashlimit-name ssh_limit_table --hashlimit 1/minute --hashlimit-burst 3/minute --hashlimit-mode srcip --hashlimit-htable-size 32768 --hashlimit-htable-max 32768 --hashlimit-htable-expire 6000000 -j ACCEPT 
+##############################
+# END GENERAL SECURITY RULES
+##############################
+
+##############################
+# START APPLICATION RULES
+##############################
+${iptable_ssh_rules}
+${iptable_ping_rules}
+##############################
+# END APPLICATION RULES
+##############################
+
+# DO NOT DELETE THIS NEXT LINE!!!
+COMMIT
+
+##############################
+# END FILTER TABLE
+##############################
+
+##############################
+# START MANGLE TABLE
+##############################
+*mangle
+:PREROUTING ACCEPT [890:318549]
+:INPUT ACCEPT [889:318462]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [356:35869]
+:POSTROUTING ACCEPT [269:28306]
+COMMIT
+##############################
+# END MANGLE TABLE
+##############################
+
+##############################
+# START NAT TABLE
+##############################
+*nat
+:PREROUTING ACCEPT [0:0]
+:INPUT ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+:POSTROUTING ACCEPT [0:0]
+COMMIT
+##############################
+# END NAT TABLE
+##############################
