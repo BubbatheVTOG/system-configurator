@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Delets a file or directory.
+# Deletes a file or directory.
 # Usage:
 #   delete "file"
 function delete () {
@@ -8,7 +8,7 @@ function delete () {
     print_ret_res "$?" "Deleted: $1"
 }
 
-# Verifies that a file or directory is non-existant.
+# Verifies that a file or directory is non-existent.
 # Usage:
 #   verify_delete "destination"
 function verify_delete () {

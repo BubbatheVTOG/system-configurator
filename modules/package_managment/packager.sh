@@ -3,7 +3,7 @@
 # Source this to determine which package manager to use.
 source $(dirname $0)/set_packager.sh
 
-# Verfies that we have the ability to "see" the packagmanager.
+# Verifies that we have the ability to "see" the packagmanager.
 # Usage:
 # 	verify_packagemanager
 function verify_packagemanger () {
@@ -11,7 +11,7 @@ function verify_packagemanger () {
 	print_ret_res "$?" "Package utility found."
 }
 
-# Installes a package.
+# Installs a package.
 # Usage:
 # 	install_package "package"
 function install_package () {

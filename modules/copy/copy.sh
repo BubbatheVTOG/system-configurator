@@ -2,10 +2,10 @@
 
 # Copies a file from one location to another.
 # Usage:
-#	copy "source" "destinationo"
+#	copy "source" "destination"
 # Optional:
-#	copy "source" "destinationo" "destination permissions in octal"
-#	copy "source" "destinationo" "destination permissions in octal" "destination user and group"
+#	copy "source" "destination" "destination permissions in octal"
+#	copy "source" "destination" "destination permissions in octal" "destination user and group"
 function copy () {
     cp -rf $1 $2
     print_ret_res "$?" "Copied $1 to $2"
@@ -33,7 +33,7 @@ function verify_copy () {
         print_ret_res "0" "Verified file exists at: $1"
     else
         print_ret_res "1" "Verified file exists at: $1"
-		return
+	return
     fi
 
 	if [ ! -z $2 ]; then

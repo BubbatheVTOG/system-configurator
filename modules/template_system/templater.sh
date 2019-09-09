@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Used to substute text into a template file, the put said file
+# Used to substitute text into a template file, the put said file
 # into a designated location.
 # Usage:
 # 	template_file "source" "destination"

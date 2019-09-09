@@ -2,10 +2,10 @@
 
 # Moves a file from one location to another.
  #Usage:
-#	move "source" "destinationo"
+#	move "source" "destination"
 # Optional:
-#	move "source" "destinationo" "destination permissions in octal"
-#	move "source" "destinationo" "destination permissions in octal" "destination user and group"
+#	move "source" "destination" "destination permissions in octal"
+#	move "source" "destination" "destination permissions in octal" "destination user and group"
 function move () {
     mv -f $1 $2
     print_ret_res "$?" "Moved $1 to $2"

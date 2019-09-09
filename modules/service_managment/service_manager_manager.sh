@@ -39,11 +39,7 @@ function service_on () {
     local retval=0
     retval+=enable_service $1 > /dev/null 2>&1
     retval+=start_service $1 > /dev/null 2>&1
-    if (( $retval == 0 )); then
-        print_ret_res "0" "Started and enabled service: $1"
-    else
-        print_ret_res "1" "Started and enabled service: $1"
-    fi
+    print_ret_res "$retval" "Started and enabled service: $1"
 }
 
 # Stops and disables a service.
@@ -53,11 +49,7 @@ function service_off () {
     local retval=0
     retval+=disaable_service $1 > /dev/null 2>&1
     retval+=stop_service $1 > /dev/null 2>&1
-    if (( $retval == 0 )); then
-        print_ret_res "0" "Stopped and disabled service: $1"
-    else
-        print_ret_res "1" "Stopped and disabled service: $1"
-    fi
+    print_ret_res "$retval" "Stopped and disabled service: $1"
 }
 
 # Verifies that a service is enable to run on boot.
@@ -68,7 +60,7 @@ function verify_service_enabled () {
     print_ret_res "$?" "Verified service enabled: $1"
 }
 
-# Verifies that a servie is not confitured to run on boot.
+# Verifies that a service is not configured to run on boot.
 # Usage:
 #   verify_service_disabled "service"
 function verify_service_disabled () {
@@ -76,7 +68,7 @@ function verify_service_disabled () {
     print_ret_res "$?" "Verified service disabled: $1"
 }
 
-# Verfies that a service is running.
+# Verifies that a service is running.
 # Usage:
 #   verify_service_running "service"
 function verify_service_running () {
@@ -99,11 +91,7 @@ function verify_service_on () {
     local retval=0
     retval+=verify_service_on $1 > /dev/null 2>&1
     retval+=verify_service_enable $1 > /dev/null 2>&1
-    if (( $retval == 0 )); then
-        print_ret_res "0" "Verified service started and enabled: $1"
-    else
-        print_ret_res "1" "Verified service started and enabled: $1"
-    fi
+    print_ret_res "$retval" "Verified service started and enabled: $1"
 }
 
 # Verifies that a service is not configured to run on boot and is stopped.
@@ -113,9 +101,5 @@ function verify_service_off () {
     local retval=0
     retval+=verify_service_off $1 > /dev/null 2>&1
     retval+=verify_service_disabled $1 > /dev/null 2>&1
-    if (( $retval == 0 )); then
-        print_ret_res "0" "Verified service stopped and disabled: $1"
-    else
-        print_ret_res "1" "Verified service stopped and disabled: $1"
-    fi
+    print_ret_res "$retval" "Verified service stopped and disabled: $1"
 }

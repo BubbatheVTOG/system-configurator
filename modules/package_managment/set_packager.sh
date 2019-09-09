@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Determins which package manager to use.
+# Determines which package manager to use.
 if $IS_ARCH; then
 	export pkg_utility="pacman"
 	export install_pkg_cmd="${pkg_utility} -S --noconfirm"
